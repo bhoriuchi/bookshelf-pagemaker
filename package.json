@@ -5,7 +5,7 @@
   "main": "lib/pagemaker.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/bhoriuchi/bookshelf-pagemaker.git"
+    "url": "git+https://github.com/bhoriuchi/bookshelf-pagemaker.git"
   },
   "keywords": [
     "Bookshelf",
@@ -16,7 +16,20 @@
   "license": "MIT",
   "homepage": "https://github.com/bhoriuchi/bookshelf-pagemaker",
   "devDependencies": {
+    "restify": "^3.0.3",
+    "fs": "^0.0.2",
+    "path": "^0.11.14",
+    "mysql": "^2.7.0",
+    "bluebird": "^2.9.27"
+  },
+  "bugs": {
+    "url": "https://github.com/bhoriuchi/bookshelf-pagemaker/issues"
+  },
+  "dependencies": {
     "bookshelf": "^0.8.1",
-    "knex": "^0.8.0"
+    "knex": "^0.8.6"
+  },
+  "scripts": {
+    "test": "echo \\\"Error: no test specified\\\" && exit 1"
   }
 }
