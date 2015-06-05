@@ -48,16 +48,28 @@ $(document).ready(function() {
         var that = this;
  
         $( 'input', this.footer() ).on( 'keyup change', function () {
+        	
+        	var useRegex = ($('#useregex').is(':checked')) ? 'true' : 'false';
+        	
             that
-                .search( this.value )
+                .search( this.value, useRegex )
                 .draw();
         } );
     } );
 	
 	
+
+	
+	
+	
 } );
 </script>
 
+<form>
+  <input type="checkbox" name="useregex" id="useregex">Use REGEX Column Search?
+</form>
+
+<br/>
 
 <table id="example" class="display compact" cellspacing="0" width="100%">
   <thead>
