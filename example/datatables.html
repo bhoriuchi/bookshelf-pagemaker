@@ -6,10 +6,25 @@
   <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
   <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
   <script src="http://cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+  
+  <style>
+    tfoot input {
+      width: 100%;
+      padding: 3px;
+      box-sizing: border-box;
+    }
+  </style>
 </head>
 
 <script>
 $(document).ready(function() {
+	
+    $('#example tfoot th').each( function () {
+        var title = $('#example thead th').eq( $(this).index() ).text();
+        $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
+    } );
+	
+	
 	$('#example').dataTable( {
 		"processing": true,
         "serverSide": true,
@@ -28,6 +43,18 @@ $(document).ready(function() {
 		{ "data": "popularity" } 
 	]
 	});
+
+	$('#example').DataTable().columns().every( function () {
+        var that = this;
+ 
+        $( 'input', this.footer() ).on( 'keyup change', function () {
+            that
+                .search( this.value )
+                .draw();
+        } );
+    } );
+	
+	
 } );
 </script>
 

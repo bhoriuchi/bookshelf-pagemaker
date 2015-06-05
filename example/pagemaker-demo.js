@@ -1,7 +1,13 @@
 // Examples of how to use pagemaker
 // The majority of the example is setting up a basic
 // API using restify, bookshelf, and knex
-// 
+// to test, run this file as a node application
+//
+// A datatables test page has been set up at //<your server>/pagemaker/datatables/example
+
+
+
+
 
 // create database connection configuration
 // fill in your own details here
@@ -52,6 +58,9 @@ var dt_html     = path.resolve('./datatables.html');
 
 // promisify fs
 Promise.promisifyAll(fs);
+
+
+
 
 
 //define the test model
@@ -137,7 +146,7 @@ function makeDatatablesHtml(req, res, next) {
 
 
 
-// functions for various page types
+// function to paginate in datatables format
 function makeDatatables(req, res, next) {
 
 	// this section of code is where pagemaker is actually used
@@ -163,6 +172,10 @@ var r_config = {
 			}
 		}
 };
+
+
+
+
 
 // set up the restify server with CORS enabled and body/query parsers
 var server = restify.createServer(r_config);
