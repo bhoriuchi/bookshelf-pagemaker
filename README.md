@@ -2,6 +2,11 @@
 
 # bookshelf-pagemaker
 
+## Install
+
+```bash
+npm install -S bookshelf-pagemaker
+```
 
 ## Examples
 
