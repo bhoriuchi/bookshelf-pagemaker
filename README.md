@@ -3,6 +3,22 @@
 # bookshelf-pagemaker
 
 
+## Examples
+
+Simply require the module and call the appropriate pagination function passing the parameters and the model.
+
+```js
+var pagemaker = require('bookshelf-pagemaker')(bookshelf);
+
+pagemaker.datatables.paginate(requestParams, YourBookshelfModel).then(function(result) {
+
+    // call a processing function and pass the result 
+    someFunction(result);
+	
+});
+
+```
+
 
 ## Usage
 
