@@ -5,7 +5,7 @@
 ## Install
 
 ```bash
-npm install -S bookshelf-pagemaker
+npm install -g bookshelf-pagemaker
 ```
 
 ## Examples
@@ -27,10 +27,9 @@ pagemaker.datatables.paginate(requestParams, YourBookshelfModel).then(function(r
 
 ## Usage
 
-
-
-## Developing
-
+```js
+var pagemaker = require('bookshelf-pagemaker')(bookshelf);
+```
 
 
 ### Tools
