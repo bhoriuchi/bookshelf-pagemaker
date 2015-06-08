@@ -11,6 +11,8 @@ npm install -g bookshelf-pagemaker
 ## Examples
 
 Simply require the module and call the appropriate pagination function passing the parameters and the model.
+Request parameters need to be in the form of an Array of Objects. Using qs is the easiest way to accomplish this.
+The included example uses restify which uses qs.
 
 ```js
 var pagemaker = require('bookshelf-pagemaker')(bookshelf);
@@ -26,6 +28,7 @@ pagemaker.datatables.paginate(requestParams, YourBookshelfModel).then(function(r
 
 
 ## Usage
+
 
 ```js
 var pagemaker = require('bookshelf-pagemaker')(bookshelf);

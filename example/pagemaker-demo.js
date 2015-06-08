@@ -164,6 +164,27 @@ function makeDatatables(req, res, next) {
 
 
 
+
+
+// function to make data tables
+function makePagemaker(req, res, next) {
+	//console.log(req);
+	
+	var http_type = (req.connection.encrypted) ? 'https://' : 'http://';
+	var baseURI = http_type + req.headers.host + req.route.path;
+	console.log(baseURI);
+	
+	pagemaker.pagemaker.paginate(req.params, TestModel, baseURI).then(function(result) {
+		
+		res.send(result);
+		return next();
+	});
+}
+
+
+
+
+
 // create restify config
 var r_config = {
 		formatters: {
@@ -190,7 +211,7 @@ server.use(restify.CORS());
 // set up routes
 server.get('/pagemaker/datatables', makeDatatables);
 server.get('/pagemaker/datatables/example', makeDatatablesHtml);
-
+server.get('/pagemaker/pagemaker', makePagemaker);
 
 
 
