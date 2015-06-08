@@ -28,7 +28,7 @@
     "fs": "^0.0.2",
     "path": "^0.11.14",
     "bluebird": "^2.9.27",
-    "qs": "*"
+    "qs": "^3.1.0"
   },
   "scripts": {
     "test": "echo \\\"Error: no test specified\\\" && exit 1"

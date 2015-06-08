@@ -29,9 +29,13 @@
 		"show": true,
 		"field": "totalCount"
 	},
+	"filteredCount": {
+		"show": true,
+		"field": "filteredCount"
+	},
 	"previous": {
 		"show": true,
-		"field": "prev"
+		"field": "previous"
 	},
 	"next": {
 		"show": true,
