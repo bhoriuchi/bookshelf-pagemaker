@@ -37,7 +37,6 @@ var path        = require('path');
 
 
 
-
 // here we initialize pagemaker with a bookshelf instance
 // the bookshelf instance will be used to set up models
 // and query the database for records
@@ -148,6 +147,8 @@ function makeDatatablesHtml(req, res, next) {
 
 // function to paginate in datatables format
 function makeDatatables(req, res, next) {
+	
+	//console.log(req.params);
 
 	// this section of code is where pagemaker is actually used
 	// each supported pagination format will have its own key 
@@ -172,7 +173,7 @@ function makePagemaker(req, res, next) {
 	
 	var http_type = (req.connection.encrypted) ? 'https://' : 'http://';
 	var baseURI = http_type + req.headers.host + req.route.path;
-	console.log(baseURI);
+	//console.log(baseURI);
 	
 	pagemaker.pagemaker.paginate(req.params, TestModel, baseURI).then(function(result) {
 		
@@ -200,19 +201,16 @@ var r_config = {
 
 // set up the restify server with CORS enabled and body/query parsers
 var server = restify.createServer(r_config);
+server.pre(restify.pre.sanitizePath());
 server.use(restify.bodyParser({ mapParams: false }));
 server.use(restify.queryParser());
 server.use(restify.CORS());
-
-
-
 
 
 // set up routes
 server.get('/pagemaker/datatables', makeDatatables);
 server.get('/pagemaker/datatables/example', makeDatatablesHtml);
 server.get('/pagemaker/pagemaker', makePagemaker);
-
 
 
 // start the server

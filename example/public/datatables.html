@@ -1,0 +1,97 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+  <link rel="stylesheet" href="http://cdn.datatables.net/1.10.7/css/jquery.dataTables.css">
+  <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+  <script src="http://cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+  
+  <style>
+    tfoot input {
+      width: 100%;
+      padding: 3px;
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+
+<script>
+$(document).ready(function() {
+	
+    $('#example tfoot th').each( function () {
+        var title = $('#example thead th').eq( $(this).index() ).text();
+        $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
+    } );
+	
+	
+	$('#example').dataTable( {
+		"processing": true,
+        "serverSide": true,
+        "ajax": {
+		"url": "http://127.0.0.1:8080/pagemaker/datatables",
+		"type": "GET",
+		"crossDomain": true,
+		"headers": {"Accept": "application/json"}
+	},
+	"columns": [
+		{ "data": "id" },
+		{ "data": "original_title" },
+		{ "data": "original_language" },
+		{ "data": "release_date" },
+		{ "data": "title" },
+		{ "data": "popularity" } 
+	]
+	});
+
+	$('#example').DataTable().columns().every( function () {
+        var that = this;
+ 
+        $( 'input', this.footer() ).on( 'keyup change', function () {
+        	
+        	var useRegex = ($('#useregex').is(':checked')) ? 'true' : 'false';
+        	
+            that
+                .search( this.value, useRegex )
+                .draw();
+        } );
+    } );
+	
+	
+
+	
+	
+	
+} );
+</script>
+
+<form>
+  <input type="checkbox" name="useregex" id="useregex">Use REGEX Column Search?
+</form>
+
+<br/>
+
+<table id="example" class="display compact" cellspacing="0" width="100%">
+  <thead>
+    <tr>
+      <th>id</th>
+      <th>original_title</th>
+      <th>original_language</th>
+      <th>release_date</th>
+      <th>title</th>
+      <th>popularity</th>
+    </tr>
+  </thead>
+  <tfoot>
+    <tr>
+      <th>id</th>
+      <th>original_title</th>
+      <th>original_language</th>
+      <th>release_date</th>
+      <th>title</th>
+      <th>popularity</th>
+    </tr>
+  </tfoot>
+</table>
+
+</html>
