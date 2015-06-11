@@ -19,7 +19,8 @@ var db = {
 		"password": "password",
 		"database": "pagemaker",
 		"charset": "utf8"
-	}
+	},
+	"debug": false
 };
 
 
@@ -27,12 +28,12 @@ var db = {
 
 
 // initialize modules
-var Promise     = require('bluebird');
-var restify     = require('restify');
-var knex        = require('knex')(db);
-var bookshelf   = require('bookshelf')(knex);
-var fs          = require('fs');
-var path        = require('path');
+var Promise      = require('bluebird');
+var restify      = require('restify');
+var knex         = require('knex')(db);
+var bookshelf    = require('bookshelf')(knex);
+var fs           = require('fs');
+var path         = require('path');
 
 
 
@@ -40,16 +41,17 @@ var path        = require('path');
 // here we initialize pagemaker with a bookshelf instance
 // the bookshelf instance will be used to set up models
 // and query the database for records
-var pagemaker   = require('../lib/pagemaker')(bookshelf);
-
+var pagemaker    = require('../lib/pagemaker')(bookshelf);
+var sample       = require('./sample-data');
 
 
 
 
 // set up demo variables
-var testTable	= 'pagemaker_demo';
-var data_file   = path.resolve('./sample-data.json');
-var dt_html     = path.resolve('./datatables.html');
+var movieTable   = 'movie';
+var userTable    = 'user';
+var starredTable = 'starred';
+var dt_html      = path.resolve('./datatables.html');
 
 
 
@@ -62,12 +64,22 @@ Promise.promisifyAll(fs);
 
 
 
-//define the test model
-var TestModel = bookshelf.Model.extend({
-	tableName: testTable
+//define the test models
+var MovieModel = bookshelf.Model.extend({
+	tableName: movieTable
+});
+var UserModel = bookshelf.Model.extend({
+	tableName: userTable,
+	starred: function() {
+		return this.belongsToMany(MovieModel, 'starred');
+		//return this.hasMany(MovieModel).through(StarredModel, 'user_id', 'movie_id');
+	}
 });
 
-
+var StarredModel = bookshelf.Model.extend({
+	tableName: 'starred',
+	
+});
 
 
 
@@ -96,9 +108,9 @@ function filterData(data) {
 
 
 
-// create demo table and load test data
-knex.schema.dropTableIfExists(testTable).then(function() {
-	return knex.schema.createTable(testTable, function(table) {
+// create demo tables and load test data
+knex.schema.dropTableIfExists(movieTable).then(function() {
+	return knex.schema.createTable(movieTable, function(table) {
 		table.integer('id').primary();
 		table.string('original_title', 300);
 		table.string('original_language', 10);
@@ -108,33 +120,39 @@ knex.schema.dropTableIfExists(testTable).then(function() {
 	})
 	.then(function() {
 		
-		fs.readFileAsync(data_file, 'utf8')
-		.catch(SyntaxError, function(e) {
-			console.error("invalid json in file");
-		})
-		.catch(function(e) {
-			console.error("unable to read file");
-		})
-		.then(function(data) {
-			var dataObj = JSON.parse(data);
-			return knex.table(testTable).insert(filterData(dataObj));
-		});
+		return knex.table(movieTable).insert(filterData(sample.movies));
+		
 	});
 });
-
-
+knex.schema.dropTableIfExists(userTable).then(function() {
+	return knex.schema.createTable(userTable, function(table) {
+		table.integer('id').primary();
+		table.string('first_name', 100);
+		table.string('last_name', 100);
+	})
+	.then(function() {
+		
+		return knex.table(userTable).insert(sample.users);
+		
+	});
+});
+knex.schema.dropTableIfExists(starredTable).then(function() {
+	return knex.schema.createTable(starredTable, function(table) {
+		table.integer('user_id');
+		table.integer('movie_id');
+	})
+	.then(function() {
+		
+		return knex.table(starredTable).insert(sample.starred);
+		
+	});
+});
 
 
 
 // function to display the datatables example html
 function makeDatatablesHtml(req, res, next) {
 	fs.readFileAsync(dt_html, 'utf8')
-	.catch(SyntaxError, function(e) {
-		console.error("invalid html in file");
-	})
-	.catch(function(e) {
-		console.error("unable to read file");
-	})
 	.then(function(html) {
 		res.send(html);
 		return next();
@@ -154,7 +172,7 @@ function makeDatatables(req, res, next) {
 	// each supported pagination format will have its own key 
 	// and paginate function in the main pagemaker object 
 	// the paginate function will return a promise with the results
-	pagemaker.datatables.paginate(req.params, TestModel).then(function(result) {
+	pagemaker.datatables.paginate(req.params, MovieModel).then(function(result) {
 		
 		// you can then use the results as you like
 		// since the example uses restify, it sends the result
@@ -175,15 +193,40 @@ function makePagemaker(req, res, next) {
 	var baseURI = http_type + req.headers.host + req.route.path;
 	//console.log(baseURI);
 	
-	pagemaker.pagemaker.paginate(req.params, TestModel, baseURI).then(function(result) {
+	pagemaker.pagemaker.paginate(req.params, UserModel, baseURI).then(function(result) {
 		
 		res.send(result);
 		return next();
 	});
 }
 
+var getId = function(qb) {
+	qb.select('id');
+}
 
+//function to make data tables
+function makeTest(req, res, next) {
+	//console.log(req);
+	
+	var m;
+	if (req.params.type === 'u') {
+		m = new UserModel();
+	}
+	else if (req.params.type === 'm') {
+		m = new MovieModel();
+	}
 
+	
+	m.fetchAll({
+		withRelated: [{
+			starred: getId
+	}]
+	
+	}).then(function(result) {
+		res.send(result);
+		return next();
+	});
+}
 
 
 // create restify config
@@ -211,7 +254,7 @@ server.use(restify.CORS());
 server.get('/pagemaker/datatables', makeDatatables);
 server.get('/pagemaker/datatables/example', makeDatatablesHtml);
 server.get('/pagemaker/pagemaker', makePagemaker);
-
+server.get('/pagemaker/test/:type', makeTest);
 
 // start the server
 server.listen(8080, function() {
