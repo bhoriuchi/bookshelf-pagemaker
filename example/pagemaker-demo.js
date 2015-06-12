@@ -50,7 +50,7 @@ var sample       = require('./sample-data');
 // set up demo variables
 var movieTable   = 'movie';
 var userTable    = 'user';
-var starredTable = 'starred';
+var starredTable = 'movie_user';
 var dt_html      = path.resolve('./datatables.html');
 
 
@@ -71,14 +71,8 @@ var MovieModel = bookshelf.Model.extend({
 var UserModel = bookshelf.Model.extend({
 	tableName: userTable,
 	starred: function() {
-		return this.belongsToMany(MovieModel, 'starred');
-		//return this.hasMany(MovieModel).through(StarredModel, 'user_id', 'movie_id');
+		return this.belongsToMany(MovieModel);
 	}
-});
-
-var StarredModel = bookshelf.Model.extend({
-	tableName: 'starred',
-	
 });
 
 
@@ -193,7 +187,7 @@ function makePagemaker(req, res, next) {
 	var baseURI = http_type + req.headers.host + req.route.path;
 	//console.log(baseURI);
 	
-	pagemaker.pagemaker.paginate(req.params, UserModel, baseURI).then(function(result) {
+	pagemaker.pagemaker.paginate(req.params, MovieModel, baseURI).then(function(result) {
 		
 		res.send(result);
 		return next();
@@ -202,27 +196,24 @@ function makePagemaker(req, res, next) {
 
 var getId = function(qb) {
 	qb.select('id');
-}
+};
 
 //function to make data tables
 function makeTest(req, res, next) {
-	//console.log(req);
-	
-	var m;
-	if (req.params.type === 'u') {
-		m = new UserModel();
-	}
-	else if (req.params.type === 'm') {
-		m = new MovieModel();
-	}
 
+	// get the base uri
+	var http_type = (req.connection.encrypted) ? 'https://' : 'http://';
+	var baseURI = http_type + req.headers.host + req.route.path;
 	
-	m.fetchAll({
-		withRelated: [{
-			starred: getId
-	}]
+	var model;
+	if (req.params.type === 'user') {
+		model = UserModel;
+	}
+	else if (req.params.type === 'movie') {
+		model = MovieModel;
+	}
 	
-	}).then(function(result) {
+	pagemaker.pagemaker.paginate(req.params, model, baseURI).then(function(result) {
 		res.send(result);
 		return next();
 	});
