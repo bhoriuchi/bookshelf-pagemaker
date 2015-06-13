@@ -70,7 +70,7 @@ var MovieModel = bookshelf.Model.extend({
 });
 var UserModel = bookshelf.Model.extend({
 	tableName: userTable,
-	starred: function() {
+	watchLater: function() {
 		return this.belongsToMany(MovieModel);
 	}
 });
@@ -159,14 +159,18 @@ function makeDatatablesHtml(req, res, next) {
 
 // function to paginate in datatables format
 function makeDatatables(req, res, next) {
-	
-	//console.log(req.params);
 
+	// define an argument object. datatables only requires the params and model
+	var args = {
+			params: req.params,
+			model: MovieModel
+	};
+	
 	// this section of code is where pagemaker is actually used
 	// each supported pagination format will have its own key 
 	// and paginate function in the main pagemaker object 
 	// the paginate function will return a promise with the results
-	pagemaker.datatables.paginate(req.params, MovieModel).then(function(result) {
+	pagemaker.datatables.paginate(args).then(function(result) {
 		
 		// you can then use the results as you like
 		// since the example uses restify, it sends the result
@@ -181,13 +185,20 @@ function makeDatatables(req, res, next) {
 
 // function to make data tables
 function makePagemaker(req, res, next) {
-	//console.log(req);
-	
+
 	var http_type = (req.connection.encrypted) ? 'https://' : 'http://';
-	var baseURI = http_type + req.headers.host + req.route.path;
-	//console.log(baseURI);
+	var baseURI = http_type + req.headers.host + req.url;
+
+	// define an argument object. since pagemaker uses next and previous it will take
+	// the uri property as well
+	var args = {
+		params: req.params,
+		model: MovieModel,
+		uri: baseURI
+	};
 	
-	pagemaker.pagemaker.paginate(req.params, MovieModel, baseURI).then(function(result) {
+	// call the paginate function
+	pagemaker.pagemaker.paginate(args).then(function(result) {
 		
 		res.send(result);
 		return next();
@@ -201,19 +212,33 @@ var getId = function(qb) {
 //function to make data tables
 function makeTest(req, res, next) {
 
+	var model, relations;
+	
 	// get the base uri
 	var http_type = (req.connection.encrypted) ? 'https://' : 'http://';
-	var baseURI = http_type + req.headers.host + req.route.path;
+	var baseURI = http_type + req.headers.host + req.url;
 	
-	var model;
+	console.log(req);
+	
+	// determine the model to use
 	if (req.params.type === 'user') {
 		model = UserModel;
+		relations = ['watchLater'];
 	}
 	else if (req.params.type === 'movie') {
 		model = MovieModel;
+		relations = [];
 	}
 	
-	pagemaker.pagemaker.paginate(req.params, model, baseURI).then(function(result) {
+	// create the argument object
+	var args = {
+			params: req.params,
+			model: model,
+			uri: baseURI,
+			relations: relations
+	};
+	
+	pagemaker.pagemaker.paginate(args).then(function(result) {
 		res.send(result);
 		return next();
 	});
