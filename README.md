@@ -41,8 +41,8 @@ pm.pagemaker.paginate(args).then(function(result) {
 ```js
 {
     "currentPage": 2,
-    "previous": "http://127.0.0.1:8080/pagemaker/test?page=1",
-    "next": "http://127.0.0.1:8080/pagemaker/test?page=3",
+    "previous": "http://127.0.0.1:8080/pagemaker/movies?page=1",
+    "next": "http://127.0.0.1:8080/pagemaker/movies?page=3",
     "totalPages": 68,
     "totalFiltered": 135,
     "totalRecords": 135,
@@ -104,7 +104,7 @@ pm.pagemaker.paginate(args).then(function(result) {
 {
     "currentPage": 1,
     "previous": null,
-    "next": "http://127.0.0.1:8080/pagemaker/test?page=2",
+    "next": "http://127.0.0.1:8080/pagemaker/users?page=2",
     "totalPages": 6,
     "totalFiltered": 12,
     "totalRecords": 12,
