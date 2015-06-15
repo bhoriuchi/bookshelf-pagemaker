@@ -199,7 +199,6 @@ function makePagemaker(req, res, next) {
 	
 	// call the paginate function
 	pagemaker.pagemaker.paginate(args).then(function(result) {
-		
 		res.send(result);
 		return next();
 	});
@@ -250,8 +249,19 @@ var r_config = {
 		formatters: {
 			'text/html': function(req, res, body) {
 				return body;
+			},
+			'*/*': function(req,res,body) {
+				if (body instanceof Error) {
+					body = {
+						code: body.body.code,
+						message: body.body.message
+					};
+				}
+				res.header('Content-Type', 'application/json');
+				return JSON.stringify(body);
 			}
-		}
+		},
+		acceptable: ['application/json', 'text/html']
 };
 
 
@@ -264,6 +274,7 @@ server.pre(restify.pre.sanitizePath());
 server.use(restify.bodyParser({ mapParams: false }));
 server.use(restify.queryParser());
 server.use(restify.CORS());
+server.use(restify.acceptParser(server.acceptable));
 
 
 // set up routes
