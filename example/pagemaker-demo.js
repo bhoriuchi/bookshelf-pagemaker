@@ -204,6 +204,109 @@ function makePagemaker(req, res, next) {
 	});
 }
 
+
+function makeCustom(req, res, next) {
+	
+	var http_type = (req.connection.encrypted) ? 'https://' : 'http://';
+	var baseURI = http_type + req.headers.host + req.url;
+	
+	// define a custom pagination scheme
+	var custom = {
+		"style": {
+			"type": "offset"
+		},
+		"data": {
+			"show": true,
+			"field": "records"
+		},
+		"pageSize": {
+			"show": false,
+			"field": "limit",
+			"defaultValue": 10,
+			"maximum": 1000,
+			"param": "limit"
+		},
+		"offset": {
+			"show": false,
+			"field": "offset",
+			"defaultValue": 0,
+			"param": "offset"
+		},
+		"page": {
+			"show": false,
+			"field": "currentPage",
+			"defaultValue": 1,
+			"param": "page"
+		},
+		"pageCount": {
+			"show": false,
+			"field": "totalPages"
+		},
+		"count": {
+			"show": true,
+			"field": "totalRecords"
+		},
+		"filteredCount": {
+			"show": true,
+			"field": "totalFiltered"
+		},
+		"previous": {
+			"show": true,
+			"field": "previous"
+		},
+		"next": {
+			"show": true,
+			"field": "next"
+		},
+		"search": {
+			"enabled": true,
+			"param": "search",
+			"regexParam": "regex",
+			"complex": false
+		},
+		"order": {
+			"enabled": true,
+			"param": "sort",
+			"defaultDirection": "asc",
+			"complex": false
+		},
+		"complex": {
+			"enabled": false,
+			"param": "columns",
+			"fieldName": "data",
+			"searchable": "searchable",
+			"orderable": "orderable",
+			"search": {
+				"key": "search",
+				"value": "value",
+				"regex": "regex"
+			},
+			"order": {
+				"key": "order",
+				"field": "column",
+				"direction": "dir"
+			}
+		}
+	};
+	
+	// define an argument object
+	var args = {
+		params: req.params,
+		model: MovieModel,
+		uri: baseURI,
+		config: custom
+	};
+	
+	// call the paginate function
+	pagemaker.custom.paginate(args).then(function(result) {
+		res.send(result);
+		return next();
+	});
+	
+}
+
+
+
 var getId = function(qb) {
 	qb.select('id');
 };
@@ -281,6 +384,7 @@ server.use(restify.acceptParser(server.acceptable));
 server.get('/pagemaker/datatables', makeDatatables);
 server.get('/pagemaker/datatables/example', makeDatatablesHtml);
 server.get('/pagemaker/pagemaker', makePagemaker);
+server.get('/pagemaker/custom', makeCustom);
 server.get('/pagemaker/test/:type', makeTest);
 
 // start the server
