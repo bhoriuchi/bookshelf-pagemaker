@@ -1,14 +1,16 @@
 
 
 # bookshelf-pagemaker
-The goal of pagemaker is to take the hard work out of pagination while allowing you to customize input parameters and output format, as well as to provide methods for popular pagination formats.
 ---
+
+The goal of pagemaker is to take the hard work out of pagination while allowing you to customize input parameters and output format, as well as to provide methods for popular pagination formats.
+
 # Install
 ---
 ```bash
 npm install -g bookshelf-pagemaker
 ```
-# &nbsp;
+
 # Search & Order
 ---
 Search and order functionality can be enabled or disabled in the pagination configuration. For basic
@@ -18,8 +20,11 @@ to "search" and "sort" in the pagemaker pagination
 <br><br>
 Complex options are available for searching and ordering specific columns. The Datatables pagination takes advantage of complex
 
-# Basic Example
+# Examples
+---
 
+### Basic Example
+---
 ##### JavaScript
 ```js
 // this example assumes that req is an object containing all
@@ -178,7 +183,9 @@ pm.datatables.paginate(args).then(function(result) {
 ```
 
 # Custom 
+
 A custom pagination configuration can be defined and passed to the custom pagination function.
+
 ##### JavaScript
 ```js
 // this example assumes that req is an object containing all
@@ -286,12 +293,14 @@ pm.custom.paginate(args).then(function(result) {
 
 # Usage
 ---
+
 ```js
 var pagemaker = require('bookshelf-pagemaker')(bookshelf);
 ```
 
 # Tools
 ---
+
 Created with [Nodeclipse](https://github.com/Nodeclipse/nodeclipse-1)
  ([Eclipse Marketplace](http://marketplace.eclipse.org/content/nodeclipse), [site](http://www.nodeclipse.org))   
 
