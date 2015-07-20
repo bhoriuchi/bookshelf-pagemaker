@@ -42,7 +42,8 @@ var baseURI = http_type + req.headers.host + req.url;
 var args = {
     params: req.params,
     model: Movies,
-    uri: baseURI
+    uri: baseURI,
+    where: 'id > 100'
 };
 
 // now call the appropriate paginate function and pass the args
