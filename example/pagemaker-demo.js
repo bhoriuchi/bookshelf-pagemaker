@@ -163,7 +163,8 @@ function makeDatatables(req, res, next) {
 	// define an argument object. datatables only requires the params and model
 	var args = {
 			params: req.params,
-			model: MovieModel
+			model: MovieModel,
+			where: 'id > 200'
 	};
 	
 	// this section of code is where pagemaker is actually used
