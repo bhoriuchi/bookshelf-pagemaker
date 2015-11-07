@@ -107,7 +107,7 @@ var User = bookshelf.Model.extend({
 
 pm(User).forge()
 .limit(2)
-.page(2)
+.offset(2)
 .query(function(qb) {
     qb.where('name', 'LIKE', '%john%');
 })
