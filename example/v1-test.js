@@ -107,7 +107,8 @@ knex.schema.dropTableIfExists(movieTable)
 				qb.where('original_language', '=', user.get('first_name'));
 			})
 			.paginate({
-				request: req
+				request: req,
+				useQuery: false
 			})
 			.end()
 			.then(function(result) {
