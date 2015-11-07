@@ -94,6 +94,22 @@ knex.schema.dropTableIfExists(movieTable)
 })
 .then(function() {
 
+	var getMovies = function(req, res, next) {
+		
+		pm(MovieModel).forge()
+		.paginate({
+			request: req
+		})
+		.query(function(qb) {
+			qb.where('original_title', 'LIKE', '%lord%');
+		})
+		.end()
+		.then(function(result) {
+			res.send(result);
+			return next();
+		});
+	};
+	
 	var getUsers = function(req, res, next) {
 		
 		pm(UserModel).forge()
@@ -115,7 +131,6 @@ knex.schema.dropTableIfExists(movieTable)
 
 		});
 	};
-	
 	
 	var getDatatables = function(req, res, next) {
 
@@ -141,6 +156,7 @@ knex.schema.dropTableIfExists(movieTable)
 
 
 	// routes
+	server.get('/api/movies', getMovies);
 	server.get('/api/users', getUsers);
 	server.get('/api/datatables', getDatatables);
 
