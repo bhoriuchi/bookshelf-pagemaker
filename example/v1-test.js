@@ -4,7 +4,7 @@ var db = {
 		"host": "127.0.0.1",
 		"user": "db",
 		"password": "password",
-		"database": "pagemaker",
+		"database": "test",
 		"charset": "utf8"
 	},
 	"debug": false
@@ -96,17 +96,24 @@ knex.schema.dropTableIfExists(movieTable)
 
 	var getMovies = function(req, res, next) {
 		
-		pm(MovieModel).forge()
-		.paginate({
-			request: req
-		})
-		.query(function(qb) {
-			qb.where('original_title', 'LIKE', '%lord%');
-		})
-		.end()
-		.then(function(result) {
-			res.send(result);
-			return next();
+		new UserModel({id: 13})
+		.fetch()
+		.then(function(user) {
+			
+			//console.log(user);
+			
+			pm(MovieModel).forge()
+			.query(function(qb) {
+				qb.where('original_language', '=', user.get('first_name'));
+			})
+			.paginate({
+				request: req
+			})
+			.end()
+			.then(function(result) {
+				res.json(result);
+				return next();
+			});
 		});
 	};
 	
@@ -160,7 +167,6 @@ knex.schema.dropTableIfExists(movieTable)
 	server.get('/api/users', getUsers);
 	server.get('/api/datatables', getDatatables);
 
-	console.log(__dirname);
 	
 	// datatables route
 	server.get(/\/datatables\/?.*/, restify.serveStatic({

@@ -46,7 +46,11 @@ var users = [ {
 	"id" : 12,
 	"first_name" : "Charlie",
 	"last_name" : "Pace"
-}, ];
+}, {
+	"id" : 13,
+	"first_name" : "en",
+	"last_name" : "Pace"
+}];
 
 var movies = [
 		{
