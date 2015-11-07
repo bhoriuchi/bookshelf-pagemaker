@@ -10,7 +10,7 @@
 * And the [Change Log](https://github.com/bhoriuchi/bookshelf-pagemaker/wiki/Change-Log) for what's new
 
 ---
-<br>
+
 
 ## Documentation
 ---
@@ -94,6 +94,8 @@ server.get('/users', getUser);
 ...
 ```
 
+---
+
 ##### Using Bookshelf Methods seamlessly
 
 ```js
@@ -117,6 +119,30 @@ pm(User).forge()
 
 ```
 
+---
+
+##### Using transactions
+
+```js
+var pm = require('bookshelf-pagemaker')(bookshelf);
+
+var User = bookshelf.Model.extend({
+    tableName: 'users'
+});
+
+bookshelf.transaction(function(t) {
+    return pm(User).forge()
+    .query(function(qb) {
+        qb.where('name', 'LIKE', '%john%');
+    })
+    .paginate({ transacting: t })
+    .end();
+})
+.then(function(results) {
+	console.log(JSON.stringify(results, null, '  '));
+});
+
+```
 
 ## Tools
 ---
