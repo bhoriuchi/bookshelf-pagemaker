@@ -1,5 +1,5 @@
 var db = {
-	"client": "mysql",
+	"client": "pg",
 	"connection": {
 		"host": "127.0.0.1",
 		"user": "db",
@@ -141,13 +141,17 @@ knex.schema.dropTableIfExists(movieTable)
 	
 	var getDatatables = function(req, res) {
 
+		//console.log('QUERY');
+		//console.log(req.query);
+		
 		pm(MovieModel, 'datatables').forge()
 		.paginate({
-			queryField: 'query',
 			request: req
 		})
 		.end()
 		.then(function(result) {
+			//console.log('RESULT');
+			//console.log(result);
 			res.json(result);
 		});
 	};
