@@ -1,5 +1,5 @@
 var db = {
-	"client": "pg",
+	"client": "mysql",
 	"connection": {
 		"host": "127.0.0.1",
 		"user": "db",
