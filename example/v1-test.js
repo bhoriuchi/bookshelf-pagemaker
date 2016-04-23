@@ -109,7 +109,8 @@ knex.schema.dropTableIfExists(movieTable)
 			.page(2)
 			.paginate({
 				request: req,
-				useQuery: false
+				useQuery: false,
+				path: '/movies1'
 			})
 			.end()
 			.then(function(result) {
