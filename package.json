@@ -1,6 +1,6 @@
 {
   "name": "bookshelf-pagemaker",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Paginate bookshelf models using various common formats",
   "main": "lib/pagemaker.js",
   "repository": {
@@ -30,7 +30,7 @@
     "url": "https://github.com/bhoriuchi/bookshelf-pagemaker/issues"
   },
   "dependencies": {
-    "bookshelf": "^0.9.4",
+    "bookshelf": "0.9.4",
     "knex": "^0.10.0",
     "bluebird": "^2.10.2",
     "qs": "^3.1.0",
